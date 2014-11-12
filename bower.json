@@ -1,0 +1,21 @@
+{
+  "name": "kreiskarte",
+  "version": "0.0.0",
+  "authors": [
+    "Stefan Wehrmeyer <mail@stefanwehrmeyer.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "static/vendor/",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "d3": "~3.4.13",
+    "topojson": "~1.6.18"
+  }
+}
