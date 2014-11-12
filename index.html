@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Kreiskarte</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style media="screen">
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: sans-serif;
+      background-color: #fff;
+    }
+
+    #vis {
+      height: 100%;
+      overflow-x: hidden;
+      overflow-y: hidden;
+    }
+
+    .kreis-grenze {
+      fill: none;
+      opacity: 0.3;
+    }
+
+    .kreis {
+      fill: none;
+      stroke: none;
+      opacity: 0.3;
+    }
+    .kreis-circle {
+      stroke: #000;
+      /*opacity: 0.5;*/
+    }
+  </style>
+</head>
+<body>
+<div id="vis">
+</div>
+<script src="static/vendor/d3/d3.min.js" charset="utf-8"></script>
+<script src="static/vendor/topojson/topojson.js" charset="utf-8"></script>
+<script src="static/js/kreiskarte.js" charset="utf-8"></script>
+<script>
+  var vis = new Kreiskarte({
+    containerId: 'vis'
+  });
+  vis.init();
+</script>
+</body>
+</html>
