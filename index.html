@@ -17,32 +17,131 @@
       overflow-x: hidden;
       overflow-y: hidden;
     }
-
+    .land-grenze {
+      fill: none;
+      stroke: #555;
+      stroke-width: 1px;
+    }
     .kreis-grenze {
       fill: none;
-      opacity: 0.3;
     }
-
+    .kreise {
+      cursor: pointer;
+    }
     .kreis {
       fill: none;
-      stroke: none;
-      opacity: 0.3;
+      /*opacity: 0.7;*/
+      cursor: pointer;
+    }
+    .kreis.active {
+      stroke: #999;
+      opacity: 1;
     }
     .kreis-circle {
-      stroke: #000;
+      fill: none;
+      cursor: pointer;
+      stroke: #666;
+      stroke-width: 1px;
+      /*opacity: 0.7;*/
+    }
+    .kreis-circle.active {
       /*opacity: 0.5;*/
+      stroke: #333;
+    }
+    .zoomed .kreis-circle {
+      stroke-width: 0.2px;
+    }
+    .zoomed .kreis-circle.active {
+      stroke-width: 0.4px;
+    }
+    .labels {
+      display: none;
+      pointer-events: none;
+      font-size: 10px;
+      color: #444;
+    }
+    .controls {
+      width: 30%;
+      min-width: 300px;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      padding: 5px;
+      background-color: rgba(255,255,255,0.75);
+    }
+    .plz-search, .plz-input {
+      font-size: 18px;
+    }
+    .plz-input.wrong {
+      outline: 1px solid red;
+    }
+    .number {
+      text-align: right;
+    }
+    .table {
+      width: 100%;
+    }
+    .table th {
+      text-align: left;
+    }
+    .table th.number {
+      text-align: right;
     }
   </style>
 </head>
 <body>
 <div id="vis">
+  <div class="controls">
+    <div class="plz-search" style="visibility:hidden">
+      <label>PLZ: <input placeholder="12049" class="plz-input" value="" size="5" maxlength="5"/></label>
+      <select id="dimension-selection">
+      </select>
+    </div>
+    <hr/>
+    <div class="kreis-info" style="display:none">
+      <h3 class="kreis-name"></h3>
+      <p>
+        Im Jahr 2013 rechneten Krankenhäuser hier <strong class="mre_p"></strong>&nbsp;Behandlungen von multi&shy;resistenten Erregern pro 1000 Patienten ab.<br/>
+        Im Deutschland-Vergleich ist das die <strong class="mre_rank"></strong>.-häufigste Behandlung von multiresistenten Erregern.<br/>
+        <span class="mrerise-section">
+          Seit 2010 hat sich die Anzahl der Behandlungen um <strong><span class="mrerise"></span>% <span class="mrerise-label">verändert</span></strong>.
+        </span>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Erreger</th>
+            <th class="number">pro 1000<br/>Patienten</th>
+            <th class="number">Platz</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="mrsa-color">
+            <td>MRSA</td>
+            <td class="number"><span class="mrsa_p"></span></td>
+            <td class="number"><span class="mrsa_rank"></span></td>
+          </tr>
+          <tr class="esbl-color">
+            <td>ESBL</td>
+            <td class="number"><span class="esbl_p"></span></td>
+            <td class="number"><span class="esbl_rank"></span></td>
+          </tr>
+          <tr class="vre-color">
+            <td>VRE</td>
+            <td class="number"><span class="vre_p"></span></td>
+            <td class="number"><span class="vre_rank"></span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 <script src="static/vendor/d3/d3.min.js" charset="utf-8"></script>
 <script src="static/vendor/topojson/topojson.js" charset="utf-8"></script>
 <script src="static/js/kreiskarte.js" charset="utf-8"></script>
 <script>
   var vis = new Kreiskarte({
-    containerId: 'vis'
+    containerId: 'vis',
+    plzInput: 'plz-input'
   });
   vis.init();
 </script>
