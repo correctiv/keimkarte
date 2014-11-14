@@ -17,9 +17,18 @@
       overflow-x: hidden;
       overflow-y: hidden;
     }
-    .land-grenze {
+    .staat-grenze {
+      stroke-linejoin: round;
+      stroke-linecap: round;
       fill: none;
       stroke: #555;
+      stroke-width: 1px;
+    }
+    .land-grenze {
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      fill: none;
+      stroke: #999;
       stroke-width: 1px;
     }
     .kreis-grenze {
@@ -29,12 +38,21 @@
       cursor: pointer;
     }
     .kreis {
+      stroke-linejoin: round;
+      stroke-linecap: round;
       fill: none;
       /*opacity: 0.7;*/
       cursor: pointer;
     }
-    .kreis.active {
-      stroke: #999;
+    .kreis:hover {
+      stroke: #333;
+      stroke-opacity: 0.3;
+    }
+    .kreis.active,
+    .kreis.active:hover {
+      stroke: #555;
+      stroke-opacity: 1;
+      stroke-width: 0.4px;
       opacity: 1;
     }
     .kreis-circle {
@@ -53,6 +71,7 @@
     }
     .zoomed .kreis-circle.active {
       stroke-width: 0.4px;
+      display: none;
     }
     .labels {
       display: none;

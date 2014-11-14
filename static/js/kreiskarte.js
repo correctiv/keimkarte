@@ -1,6 +1,23 @@
 (function(window){
   'use strict';
 
+  d3.selection.prototype.moveToFront = function() {
+    return this.each(function(){
+      this.parentNode.appendChild(this);
+    });
+  };
+
+  function getQueryObject() {
+    var query = window.location.search.substring(1);
+    var qobj = {};
+    var vars = query.split('&');
+    for (var i = 0; i < vars.length; i++) {
+      var pair = vars[i].split('=');
+      qobj[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+    }
+    return qobj;
+  }
+
   function Kreiskarte(options) {
     options = options || {};
     var defaultOptions = {
@@ -15,8 +32,8 @@
         mrerise: {
           key: 'mrerise',
           label: 'Anstieg MRE 2010 - 2013',
-          range: ["#4d9221", "#7fbc41", "#b8e186", "#e6f5d0", "#f7f7f7", "#fde0ef", "#f1b6da", "#de77ae", "#c51b7d"],
-          domain: [-200, -100, 0, 100, 200],
+          range: ["#276419", "#4d9221", "#7fbc41", "#b8e186", "#e6f5d0", "#f7f7f7", "#fde0ef", "#f1b6da", "#de77ae", "#c51b7d", "#8e0152"],
+          domain: [-300, -200, -100, 0, 100, 200, 300],
           scale: 'quantize'
         },
         mrsa: {
@@ -104,6 +121,36 @@
     d3.csv(this.options.plzFile, this.processPostcodes.bind(this));
   };
 
+  Kreiskarte.prototype.postInit = function() {
+    if (!(this.features && this.plz)) {
+      return false;
+    }
+
+    var self = this;
+
+    var queryObject = getQueryObject();
+    if (queryObject.kreis) {
+      this.activateKreis(queryObject.kreis);
+    } else if (queryObject.zoom) {
+      this.showZoom(queryObject.zoom);
+    } else {
+      history.pushState({}, "", ".");
+    }
+
+    window.onpopstate = function(event) {
+      if (!event.state) { return; }
+
+      if (event.state.kreis) {
+        self.activateKreis(event.state.kreis, true);
+      } else if (event.state.zoom) {
+        self.deactivateKreis();
+        self.showZoom(event.state.zoom);
+      } else {
+        self.deactivateKreis();
+      }
+    };
+  };
+
   Kreiskarte.prototype.drawMap = function(error, kreise) {
     var self = this;
 
@@ -136,14 +183,9 @@
     }
 
     this.kreise.append('path')
-      .datum(topojson.mesh(kreise, kreise.objects.land, function(a, b) { return a !== b; }))
+      .datum(topojson.mesh(kreise, kreise.objects.land, function(a, b) { return a === b; }))
       .attr('d', this.path)
-      .attr('class', 'land-grenze');
-
-    this.kreise.append('path')
-      .datum(topojson.mesh(kreise, kreise.objects.kreise, function(a, b) { return a !== b; }))
-      .attr('d', this.path)
-      .attr('class', 'kreis-grenze');
+      .attr('class', 'staat-grenze');
 
     this.kreise
       .selectAll('.kreis')
@@ -156,6 +198,15 @@
         self.activateKreis(d.id);
       });
 
+    this.kreise.append('path')
+      .datum(topojson.mesh(kreise, kreise.objects.land, function(a, b) { return a !== b; }))
+      .attr('d', this.path)
+      .attr('class', 'land-grenze');
+
+    this.kreise.append('path')
+      .datum(topojson.mesh(kreise, kreise.objects.kreise, function(a, b) { return a !== b; }))
+      .attr('d', this.path)
+      .attr('class', 'kreis-grenze');
 
     this.dorling = this.svg.append('g')
       .attr('class', 'dorling');
@@ -174,6 +225,7 @@
       });
 
     this.updateMap();
+    this.postInit();
   };
 
   Kreiskarte.prototype.updateMap = function() {
@@ -206,13 +258,14 @@
     var self = this;
     this.plz = {};
     for (var i = 0; i < data.length; i += 1) {
-      this.plz[data[i].plz] = data[i].ags;
+      this.plz[data[i].plz] = +data[i].ags;
     }
     d3.select('.plz-search').style('visibility', 'visible');
     this.plzInput = d3.select('.' + this.options.plzInput);
     this.plzInput.on('input', function() {
       self.plzSearch(this.value);
     });
+    this.postInit();
   };
 
   Kreiskarte.prototype.plzSearch = function(plz) {
@@ -225,16 +278,20 @@
       this.deactivateKreis();
       return false;
     }
-    this.deactivateKreis();
+    this.deactivateKreis(true);
     d3.select('.' + this.options.plzInput).classed('wrong', false);
     this.activateKreis(kreis);
   };
 
-  Kreiskarte.prototype.activateKreis = function(kreis) {
+  Kreiskarte.prototype.activateKreis = function(kreis, noHistory) {
+    var elem = this.svg.select('.kreis-' + kreis);
     var d = this.svg.select('.kreis-' + kreis).data()[0];
     if (d && d !== this.activated) {
+      if (!noHistory) {
+        history.pushState({kreis: kreis}, "Kreis " + kreis, "?kreis=" + kreis);
+      }
+      elem.moveToFront();
       this.activated = d;
-      this.svg.classed('zoomed', true);
       this.svg.selectAll('.kreis').classed('active', false);
       this.svg.selectAll('.kreis-circle').classed('active', false);
       this.svg.selectAll('.kreis-' + kreis).classed('active', true);
@@ -264,19 +321,27 @@
       d3.select('.mrsa-color').style('background-color', this.kreisColor.mrsa(d.properties.mrsa_p));
       d3.select('.esbl-color').style('background-color', this.kreisColor.esbl(d.properties.esbl_p));
       d3.select('.vre-color').style('background-color', this.kreisColor.vre(d.properties.vre_p));
-    } else {
-      this.deactivateKreis();
     }
   };
 
-  Kreiskarte.prototype.deactivateKreis = function() {
+  Kreiskarte.prototype.deactivateKreis = function(noHistory) {
     if (!this.activated) { return; }
     this.activated = null;
-    this.svg.classed('zoomed', false);
     this.svg.selectAll('.kreis').classed('active', false);
     this.svg.selectAll('.kreis-circle').classed('active', false);
     d3.select('.kreis-info').style('display', 'none');
     this.zoomToBounds();
+    if (!noHistory) {
+      history.pushState({}, "", ".");
+    }
+  };
+
+  Kreiskarte.prototype.showZoom = function(kreis, noHistory) {
+    var d = this.svg.select('.kreis-' + kreis).data()[0];
+    if (!noHistory) {
+      history.pushState({zoom: kreis}, "Kreis " + kreis, "?zoom=" + kreis);
+    }
+    this.zoomToBounds(d);
   };
 
   Kreiskarte.prototype.zoomToBounds = function(d) {
@@ -288,12 +353,14 @@
       k = 5;
       tw = this.width / 5 * 2;
       th = this.height / 5 * 2;
+      this.svg.classed('zoomed', true);
     } else {
       x = this.width / 2;
       y = this.height / 2;
       k = 1;
       tw = this.width / 2;
       th = this.height / 2;
+      this.svg.classed('zoomed', false);
     }
 
     this.svg.transition()
