@@ -1,0 +1,288 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: sans-serif;
+  background-color: #fff;
+}
+body {
+  /* Background pattern from subtlepatterns.com */
+  /*background-image: url('../img/grey_sandbag.png');*/
+	background-attachment: fixed;
+	-webkit-font-smoothing: antialiased;
+}
+
+/*@media (min—moz-device-pixel-ratio: 1.5),
+(-o-min-device-pixel-ratio: 3/2),
+(-webkit-min-device-pixel-ratio: 1.5),
+(min-device-pixel-ratio: 1.5),
+(min-resolution: 1.5dppx) {
+	body {
+		background-image url('../img/grey_sandbag_@2X.png');
+	}
+}*/
+
+h4, p, hr {
+  margin: 0.5em 0;
+}
+
+.vis {
+  position: relative;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+#controls {
+  overflow-y: scroll;
+}
+
+#legende {
+  max-width: 50%;
+}
+
+.controls {
+  background-color: #fff;
+  /*background-color: rgba(255, 255, 255, 0.7);*/
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
+
+.zoomed {
+  stroke-width: 0.3px;
+}
+
+.staat-grenze {
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  fill: none;
+  stroke: #555;
+  stroke-width: 1px;
+}
+.zoomed .staat-grenze {
+  stroke-width: 0.1px;
+}
+.land-grenze {
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  fill: none;
+  stroke: #999;
+  stroke-width: 1px;
+}
+.zoomed .land-grenze {
+  stroke-width: 0.2px;
+}
+.kreis-grenze {
+  fill: none;
+}
+.zoomed .kreis-grenze {
+  stroke: #bbb;
+  stroke-width: 0.05px;
+}
+.kreise {
+  cursor: pointer;
+}
+.kreis {
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  fill: none;
+  /*opacity: 0.7;*/
+  cursor: pointer;
+}
+.kreis:hover {
+  stroke: #333;
+  stroke-opacity: 0.3;
+}
+.kreis.active,
+.kreis.active:hover {
+  stroke: #555;
+  stroke-opacity: 1;
+  stroke-width: 0.4px;
+  opacity: 1;
+}
+.kreis-circle {
+  fill: none;
+  cursor: pointer;
+  stroke: #666;
+  stroke-width: 1px;
+  /*opacity: 0.7;*/
+}
+.kreis-circle.active {
+  /*opacity: 0.5;*/
+  stroke: #333;
+}
+.zoomed .kreis-circle {
+  stroke-width: 0.2px;
+}
+.zoomed .kreis-circle.active {
+  stroke-width: 0.4px;
+  display: none;
+}
+.place-label {
+  pointer-events: none;
+  font-size: 10px;
+  stroke: #666;
+}
+.place-label.shadow {
+  stroke: white;
+  stroke-width: 2.5px;
+  opacity: 0.7;
+}
+.zoomed .place-label {
+  font-size: 4px;
+}
+.zoomed .place-label.shadow {
+  stroke-width: 1px;
+}
+@media (max-width: 768px) {
+  .place-label {
+    display: none;
+  }
+  .zoomed .place-label {
+    display: block;
+  }
+}
+
+
+.kreis-name {
+  margin: 0.2em 0 0.2em;
+}
+.kreis-detail {
+  margin: 0.2em;
+}
+
+.plz-input.wrong {
+  outline: 1px solid red;
+}
+#key-selection {
+  font-size: 18px;
+  width: 100%;
+}
+.number {
+  text-align: right;
+}
+.table {
+  width: 100%;
+}
+.table th {
+  text-align: left;
+}
+.table td {
+  padding: 2px;
+}
+
+.table td span {
+  background-color: rgba(255, 255, 255, 0.6);
+  padding: 0.1em;
+}
+
+.table th.number {
+  text-align: right;
+}
+#hoverlabel {
+  position: absolute;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+#zoomout {
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  font-size: 36px;
+  cursor: pointer;
+}
+
+#nocontrol-label, #nocontrol-keylabel {
+  display: none;
+}
+
+.nocontrols #nocontrol-label {
+  display: block;
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 0.5em;
+}
+
+.nocontrols #nocontrol-keylabel {
+  display: block;
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 0.5em;
+  bottom: 0;
+  right: 0;
+}
+
+
+
+@font-face {
+  font-family: 'controls';
+  src: url('../font/controls.eot?84761927');
+  src: url('../font/controls.eot?84761927#iefix') format('embedded-opentype'),
+       url('../font/controls.woff?84761927') format('woff'),
+       url('../font/controls.ttf?84761927') format('truetype'),
+       url('../font/controls.svg?84761927#controls') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'controls';
+    src: url('../font/controls.svg?84761927#controls') format('svg');
+  }
+}
+*/
+
+ [class^="icon-"]:before, [class*=" icon-"]:before {
+  font-family: "controls";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: .2em;
+  text-align: center;
+  /* opacity: .8; */
+
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+
+  /* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
+
+  /* Animation center compensation - margins should be symmetric */
+  /* remove if not needed */
+  margin-left: .2em;
+
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+
+  /* Uncomment for 3D effect */
+  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+
+.icon-hospital:before { content: '\e800'; } /* '' */
+.icon-mail-squared:before { content: '\e801'; } /* '' */
+.icon-facebook-squared:before { content: '\e802'; } /* '' */
+.icon-twitter-squared:before { content: '\e803'; } /* '' */
+.icon-cancel:before { content: '\e804'; } /* '' */
+.icon-gplus-squared:before { content: '\e805'; } /* '' */
+.icon-bug:before { content: '\e806'; } /* '' */
+.icon-down-circled2:before { content: '\e807'; } /* '' */
+.icon-info-circled:before { content: '\e808'; } /* '' */
+.icon-zoom-out:before { content: '\e809'; } /* '' */
+.icon-list-numbered:before { content: '\e80a'; } /* '' */
+.icon-help-circled:before { content: '\e80b'; } /* '' */
+.icon-link:before { content: '\e80c'; } /* '' */
+.icon-export-alt:before { content: '\e80d'; } /* '' */
+.icon-attention-circled:before { content: '\e80e'; } /* '' */
+.icon-github-squared:before { content: '\e80f'; } /* '' */
+.icon-up-circled:before { content: '\e810'; } /* '' */
+.icon-down-circled:before { content: '\e811'; } /* '' */
+.icon-zoom-in:before { content: '\e812'; } /* '' */
+.icon-code:before { content: '\e813'; } /* '' */
