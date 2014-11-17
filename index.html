@@ -13,7 +13,10 @@
       <div id="vis" class="vis col-sm-7 col-md-8 col-lg-9">
         <h1 id="nocontrol-label" class="kreis-name"></h1>
         <h2 id="nocontrol-keylabel" class="current_label"></h2>
-        <div id="hoverlabel"></div>
+        <div id="hoverlabel" style="display:none">
+          <strong class="hl-name"></strong><br/>
+          <small class="hl-value"></small>
+        </div>
         <div id="zoomout" style="display:none"><span class="icon-zoom-out"></span></div>
       </div>
       <div id="controls" class="col-sm-5 col-md-4 col-lg-3">
@@ -119,16 +122,16 @@
             <div class="clearfix">
               <h4>Diese Karte teilen</h4>
               <div class="pull-left">
-                <a href="">
+                <a class="share-link facebook-share" href="">
                   <i class="icon-facebook-squared"></i>
                 </a>
-                <a href="">
+                <a class="share-link twitter-share" href="">
                   <i class="icon-twitter-squared"></i>
                 </a>
-                <a href="">
+                <a class="share-link gplus-share" href="">
                   <i class="icon-gplus-squared"></i>
                 </a>
-                <a href="">
+                <a class="share-link mail-share" href="">
                   <i class="icon-mail-squared"></i>
                 </a>
               </div>

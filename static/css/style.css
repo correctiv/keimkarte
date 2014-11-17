@@ -178,9 +178,19 @@ h4, p, hr {
 .table th.number {
   text-align: right;
 }
+
+.share-link, .share-link:hover {
+  text-decoration: none;
+  font-size: 24px;
+}
+
 #hoverlabel {
   position: absolute;
   z-index: 1000;
+  pointer-events: none;
+  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 0.5em;
   pointer-events: none;
 }
 

@@ -11,6 +11,10 @@
     return ('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch;
   };
 
+  var genericGetHTML = function(d) {
+    return Math.round(d.properties[this.key]) + ' ' + this.label;
+  };
+
   function getQueryObject() {
     var query = window.location.search.substring(1);
     var qobj = {};
@@ -40,10 +44,13 @@
         mrerise: {
           key: 'mrerise',
           label: 'Veränderung MRE 2010 - 2013',
-          range: ["#b8e186", "#e6f5d0", /*"#f7f7f7",*/ "#fde0ef", "#f1b6da", "#de77ae", "#c51b7d", "#8e0152"],
+          range: ["#b8e186", "#e6f5d0", "#fde0ef", "#f1b6da", "#de77ae", "#c51b7d", "#8e0152"],
           domain: [-100, 0, 100, 200, 300],
           scale: 'quantize',
-          makeLabel: function(d){ return d + '%'; }
+          makeLabel: function(d){ return d + '%'; },
+          getHTML: function(d) {return d.properties.mrerise > 0 ?
+                                    d.properties.mrerise + '% MRE-Anstieg' :
+                                    d.properties.mrerise + '% MRE-Verringerung';}
         },
         mrsa: {
           key: 'mrsa_p',
@@ -51,7 +58,8 @@
           range: ["#edf8fb","#bfd3e6","#9ebcda","#8c96c6","#8c6bb1","#88419d","#6e016b"],
           scale: 'quantize',
           scaleId: 'p1000',
-          domain: [0]
+          domain: [0],
+          getHTML: genericGetHTML
         },
         esbl: {
           key: 'esbl_p',
@@ -59,7 +67,8 @@
           range: ["#edf8fb","#bfd3e6","#9ebcda","#8c96c6","#8c6bb1","#88419d","#6e016b"],
           scale: 'quantize',
           scaleId: 'p1000',
-          domain: [0]
+          domain: [0],
+          getHTML: genericGetHTML
         },
         vre: {
           key: 'vre_p',
@@ -67,7 +76,8 @@
           range: ["#edf8fb","#bfd3e6","#9ebcda","#8c96c6","#8c6bb1","#88419d","#6e016b"],
           scale: 'quantize',
           scaleId: 'p1000',
-          domain: [0]
+          domain: [0],
+          getHTML: genericGetHTML
         },
         mre: {
           key: 'mre_p',
@@ -75,7 +85,8 @@
           range: ["#edf8fb","#bfd3e6","#9ebcda","#8c96c6","#8c6bb1","#88419d","#6e016b"],
           scale: 'quantize',
           scaleId: 'p1000',
-          domain: [0]
+          domain: [0],
+          getHTML: genericGetHTML
         }
       },
       placeholders: ['mre', 'mre_p', 'mre_rank', 'mrerise',
@@ -209,7 +220,7 @@
   };
 
   Kreiskarte.prototype.getStateQueryString = function(change) {
-    var queryString = [], val;
+    var queryString = [], val, path = [];
     for (var key in this.state) {
       if (change && change[key]) {
         val = change[key];
@@ -217,6 +228,7 @@
         val = this.state[key];
       }
       if (val) {
+        path.push(val);
         queryString.push(encodeURIComponent(key) + '=' + encodeURIComponent(val));
       }
     }
@@ -246,6 +258,14 @@
         d3.selectAll('.current_p').text(Math.round(this.activated.properties.mre_p));
         d3.selectAll('.current_rank').text(Math.round(this.activated.properties.mre_rank));
       }
+      d3.selectAll('.facebook-share').attr('href',
+        'https://www.facebook.com/sharer/sharer.php?u=&t=');
+      d3.selectAll('.twitter-share').attr('href',
+          'https://www.facebook.com/sharer/sharer.php?u=&t=');
+      d3.selectAll('.gplus-share').attr('href',
+          'https://www.facebook.com/sharer/sharer.php?u=&t=');
+      d3.selectAll('.mail-share').attr('href',
+          'mailto:?subject=&body=' + this.activated.properties.name);
     }
   };
 
@@ -319,11 +339,18 @@
       .on('mousemove', function(d){
         if (isTouch()) { return; }
         var offset = $('#vis').offset();
-        var x = d3.event.x + offset.left + 0;
-        var y = d3.event.y + offset.top  - 20;
+        var x = d3.event.x + offset.left - 60;
+        if (x > self.width - 300) {
+          x -= 100;
+        } else if (x < 60) {
+          x += 60;
+        }
+        var y = d3.event.y + offset.top  - 60;
+
+        $('#hoverlabel').find('.hl-name').text(d.properties.name);
+        $('#hoverlabel').find('.hl-value').text(self.options.dimensions[self.state.key].getHTML(d));
 
         $('#hoverlabel')
-          .text(d.properties.name)
           .show()
           .css({left: x + 'px', top: y + 'px'});
       })
