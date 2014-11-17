@@ -14,8 +14,9 @@ karte:
 						static/geo/kreise.geojson src/geo/VG250_KRS_merged.shp
 		topojson \
 				--out static/geo/kreise.topojson \
-				--id-property=+AGS \
+				--id-property=AGS \
 				-p name=GEN \
+				-p cityname=NAME \
 				-p mre=+mre \
 				-p mre_p=+mre_p \
 				-p mre_rank=+mre_rank \
@@ -34,7 +35,8 @@ karte:
 				-q 2000 \
 				-s 0.00000004 \
 				static/geo/kreise.geojson \
-				static/geo/land.geojson
+				static/geo/land.geojson \
+				src/geo/places/places.geojson
 
 plz:
 		rm -rf src/plz
