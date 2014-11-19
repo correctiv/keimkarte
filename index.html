@@ -1,13 +1,7 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="utf-8">
-  <title>Kreiskarte</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="stylesheet" href="static/css/bootstrap.min.css" media="screen" charset="utf-8">
-  <link rel="stylesheet" href="static/css/style.css" media="screen" charset="utf-8">
-</head>
-<body>
+---
+layout: default
+
+---
   <div class="container-fluid">
     <div class="row">
       <div id="vis" class="vis col-sm-7 col-md-8 col-lg-9">
@@ -218,36 +212,3 @@
     </div>
   </div>
 </div>
-<script src="static/vendor/jquery/dist/jquery.min.js" charset="utf-8"></script>
-<script src="static/vendor/bootstrap.min.js" charset="utf-8"></script>
-<script src="static/vendor/d3/d3.min.js" charset="utf-8"></script>
-<script src="static/vendor/topojson/topojson.js" charset="utf-8"></script>
-<script src="static/js/kreiskarte.js" charset="utf-8"></script>
-<script>
-  var windowHeight = $(window).height();
-  var noControls;
-  if (document.location.search.indexOf('nocontrols') !== -1) {
-    $('#vis').height(windowHeight);
-    $('#controls').remove();
-    $('#zoomout').remove();
-    $('body').addClass('nocontrols');
-    noControls = true;
-  } else {
-    if ($(window).width() < 768) {
-      var controlHeight = Math.round(window.innerHeight / 5 * 2);
-      $('#controls').height(controlHeight);
-      $('#vis').height(windowHeight - controlHeight);
-    } else {
-      $('#vis').height(windowHeight);
-      $('#controls').height(windowHeight);
-    }
-  }
-  var vis = new Kreiskarte({
-    containerId: 'vis',
-    plzInput: 'plz-input',
-    noControls: noControls
-  });
-  vis.init();
-</script>
-</body>
-</html>
