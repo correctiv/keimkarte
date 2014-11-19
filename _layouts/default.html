@@ -34,6 +34,9 @@
       $('#controls').height(windowHeight);
     }
   }
+  if (document.location.hash && document.location.hash.indexOf('-modal') !== -1) {
+    $(document.location.hash).modal();
+  }
   var vis = new Kreiskarte({
     containerId: 'vis',
     plzInput: 'plz-input',
