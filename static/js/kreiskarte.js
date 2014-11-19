@@ -312,13 +312,13 @@
         d3.selectAll('.current_rank').text(this.showPlaceholder(this.state.key + '_rank'));
       } else {
         d3.selectAll('.current_label').text(this.showPlaceholderLabel('mre_rise'));
-        d3.selectAll('.current_p').text(this.showPlaceholder('mre_p'));
-        d3.selectAll('.current_rank').text(this.showPlaceholder('mre_rank'));
+        d3.selectAll('.current_p').text(this.showPlaceholder('mre_p_2013'));
+        d3.selectAll('.current_rank').text(this.showPlaceholder('mre_rank_2013'));
       }
     } else {
       d3.selectAll('.current_label').text(this.options.dimensions[this.state.key].label);
     }
-    d3.selectAll('.current_year').text(this.state.jahr);
+    d3.selectAll('.current_year').text(this.state.jahr || '2013');
     d3.selectAll('.facebook-share').attr('href',
       'https://www.facebook.com/sharer/sharer.php?u=' + shareUrl + '&t=' + shareText);
     d3.selectAll('.twitter-share').attr('href',
