@@ -322,7 +322,7 @@
     d3.selectAll('.facebook-share').attr('href',
       'https://www.facebook.com/sharer/sharer.php?u=' + shareUrl + '&t=' + shareText);
     d3.selectAll('.twitter-share').attr('href',
-        'https://twitter.com/share?text=&url=' + shareUrl);
+        'https://twitter.com/share?text=' + window.encodeURIComponent('@correctiv_org #keime') + '&url=' + shareUrl);
     d3.selectAll('.gplus-share').attr('href',
         'https://plus.google.com/share?url=' + shareUrl);
     d3.selectAll('.mail-share').attr('href',
