@@ -4,16 +4,19 @@ layout: default
 ---
   <div class="container-fluid">
     <div class="row">
-      <div id="vis" class="vis col-sm-7 col-md-8 col-lg-9">
+      <div id="vis" class="vis col-sm-5 col-md-6 col-lg-8">
         <h1 id="nocontrol-label" class="kreis-name"></h1>
-        <h2 id="nocontrol-keylabel" class="current_label"></h2>
+        <h2 id="nocontrol-keylabel">
+          <strong class="current_year"></strong>:
+          <span class="current_label"></span>
+        </h2>
         <div id="hoverlabel" style="display:none">
           <strong class="hl-name"></strong><br/>
           <small class="hl-value"></small>
         </div>
         <div id="zoomout" style="display:none"><span class="icon-zoom-out"></span></div>
       </div>
-      <div id="controls" class="col-sm-5 col-md-4 col-lg-3">
+      <div id="controls" class="col-sm-7 col-md-6 col-lg-4">
         <div class="controls">
           <div class="visible-xs-block">
             <div class="kreis-info" style="display:none">
@@ -32,51 +35,70 @@ layout: default
             </div>
           </div>
           <div class="kreis-info hidden-xs" style="display:none">
-            <h2 class="kreis-name"></h2>
-            <p class="kreis-detail">
-              2013 rechneten Krankenhäuser hier <strong class="mre_p"></strong> Behandlungen von multi­resistenten
-              Keimen pro 1000 Patienten ab. Im Deutschland-Vergleich ist das die
-              <strong class="mre_rank"></strong>.-häufigste Behandlung.
-              <span class="mrerise-section">Seit 2010 hat sich die Anzahl um <strong><span class="mrerise"></span>% <span class="mrerise-label"></span>.</strong></span>
-            </p>
-            <table class="table table-condensed">
-              <thead>
-                <tr>
-                  <th>Erreger</th>
-                  <th class="number">pro 1000 Patienten</th>
-                  <th class="number">Platz</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="mrsa-color">
-                  <td><span>MRSA</span></td>
-                  <td class="number">
-                    <span class="mrsa_p"></span>
-                  </td>
-                  <td class="number">
-                    <span class="mrsa_rank"></span>
-                  </td>
-                </tr>
-                <tr class="esbl-color">
-                  <td><span>ESBL</span></td>
-                  <td class="number">
-                    <span class="esbl_p"></span>
-                  </td>
-                  <td class="number">
-                    <span class="esbl_rank"></span>
-                  </td>
-                </tr>
-                <tr class="vre-color">
-                  <td><span>VRE</span></td>
-                  <td class="number">
-                    <span class="vre_p"></span>
-                  </td>
-                  <td class="number">
-                    <span class="vre_rank"></span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="clearfix">
+              <h2 class="kreis-name pull-left"></h2>
+              <p class="pull-right">
+                <strong class="current_p"></strong> Fälle pro 1000 /
+                <strong class="current_rank"></strong>. Platz
+                im Jahr <strong class="current_year"></strong>
+              </p>
+            </div>
+            <div class="modal-copy">
+              <p class="kreis-detail">
+                2013 rechneten Krankenhäuser hier <strong class="mre_p_2013"></strong> Behandlungen von multi­resistenten
+                Keimen pro 1000 Patienten ab. Im Deutschland-Vergleich ist das die
+                <strong class="mre_rank_2013"></strong>.-häufigste Behandlung.
+                <span class="mre_rise-section">Seit 2010 hat sich die Anzahl um <strong><span class="mre_rise"></span>% <span class="mre_rise-label"></span>.</strong></span>
+              </p>
+              <table class="table table-condensed">
+                <thead>
+                  <tr>
+                    <th>Erreger</th>
+                    <th class="number">pro 1000 Patienten</th>
+                    <th class="number">Veränderung 2010 - 2013</th>
+                    <th class="number">Platz</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="mrsa-color">
+                    <td><span>MRSA</span></td>
+                    <td class="number">
+                      <span class="mrsa_p"></span>
+                    </td>
+                    <td class="number">
+                      <span><span class="mrsa_rise"></span>%</span>
+                    </td>
+                    <td class="number">
+                      <span class="mrsa_rank"></span>
+                    </td>
+                  </tr>
+                  <tr class="esbl-color">
+                    <td><span>ESBL</span></td>
+                    <td class="number">
+                      <span class="esbl_p"></span>
+                    </td>
+                    <td class="number">
+                      <span><span class="esbl_rise"></span>%</span>
+                    </td>
+                    <td class="number">
+                      <span class="esbl_rank"></span>
+                    </td>
+                  </tr>
+                  <tr class="vre-color">
+                    <td><span>VRE</span></td>
+                    <td class="number">
+                      <span class="vre_p"></span>
+                    </td>
+                    <td class="number">
+                      <span><span class="vre_rise"></span>%</span>
+                    </td>
+                    <td class="number">
+                      <span class="vre_rank"></span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
             <hr/>
           </div>
           <div class="static-controls">
@@ -103,14 +125,29 @@ layout: default
                 <a class="mre-btn btn btn-default btn-xs" data-key="mre" href="">
                   MRE
                 </a>
-                <a class="mrerise-btn btn btn-default btn-xs" data-key="mrerise" href="">
-                  Anstieg MRE
+                <a class="mre_rise-btn btn btn-default btn-xs" data-key="mre_rise" href="">
+                  Veränderung MRE
                 </a>
               </div>
             </div>
             <hr/>
-            <div class="plz-search" style="visibility:hidden">
-              <label>PLZ-Suche: <input placeholder="PLZ" class="plz-input" value="" size="8" maxlength="5"/></label>
+            <div class="clearfix">
+              <div class="pull-left">
+                <div class="plz-search" style="visibility:hidden">
+                  <label><span class="visible-lg">PLZ-Suche: </span><input type="number" placeholder="PLZ" class="plz-input" value="" size="8" maxlength="5"/></label>
+                </div>
+              </div>
+              <div class="pull-right">
+                <div class="yearslider" style="display:none">
+                  <input type="range" min="2010" max="2013" value="2013"/><br/>
+                  <div class="yearlabels">
+                    <span>2010</span>
+                    <span>2011</span>
+                    <span>2012</span>
+                    <span>2013</span>
+                  </div>
+                </div>
+              </div>
             </div>
             <hr/>
             <div class="clearfix">
@@ -129,11 +166,14 @@ layout: default
                   <i class="icon-mail-squared"></i>
                 </a>
               </div>
-              <p class="pull-right">
-                <button class="btn btn-default btn-xs" data-toggle="modal" data-target="#info-modal">
+              <div class="pull-right">
+                <a href="https://mrsa-erfahrungen.correctiv.org/" target="_blank" class="btn btn-default">
+                  Selbst Betroffen?
+                </a>
+                <a href="#info-modal" class="info-btn btn btn-default" data-toggle="modal">
                   <i class="icon-info-circled"></i>
-                </button>
-              </p>
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -148,66 +188,82 @@ layout: default
           <h2 class="kreis-name modal-title" id="modal-label"></h2>
         </div>
         <div class="modal-body">
-          <p class="kreis-detail">
-            2013 rechneten Krankenhäuser hier <strong class="mre_p"></strong> Behandlungen von multi­resistenten
-            Keimen pro 1000 Patienten ab. Im Deutschland-Vergleich ist das die
-            <strong class="mre_rank"></strong>.-häufigste Behandlung.
-            <span class="mrerise-section">Seit 2010 hat sich die Anzahl um <strong><span class="mrerise"></span>% erhöht.</strong></span>
-          </p>
-          <table class="table table-condensed">
-            <thead>
-              <tr>
-                <th>Erreger</th>
-                <th class="number">pro 1000 Patienten</th>
-                <th class="number">Platz</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="mrsa-color">
-                <td><span>MRSA</span></td>
-                <td class="number">
-                  <span class="mrsa_p"></span>
-                </td>
-                <td class="number">
-                  <span class="mrsa_rank"></span>
-                </td>
-              </tr>
-              <tr class="esbl-color">
-                <td><span>ESBL</span></td>
-                <td class="number">
-                  <span class="esbl_p"></span>
-                </td>
-                <td class="number">
-                  <span class="esbl_rank"></span>
-                </td>
-              </tr>
-              <tr class="vre-color">
-                <td><span>VRE</span></td>
-                <td class="number">
-                  <span class="vre_p"></span>
-                </td>
-                <td class="number">
-                  <span class="vre_rank"></span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+
         </div>
       </div>
     </div>
   </div>
 <div class="modal fade" id="info-modal" tabindex="-1" role="dialog" aria-labelledby="modal-info-label" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Schließen</span></button>
         <h2 class="modal-title" id="modal-info-label">Informationen</h2>
       </div>
       <div class="modal-body">
-        <p>
-          <a class="correctiv" href="https://www.correctiv.org/" target="_blank">
-          Correctiv</a>
-        </p>
+<h3>Was sagen uns diese Daten?</h3>
+
+<p>Die Daten zeigen alle Abrechnungen aller Krankenhäuser aus den Jahren 2010 bis 2013. In der Auswertung haben wir uns auf die häufigsten und gefährlichsten multiresistenten Erreger konzentriert, auf MRSA, VRE und ESBL.</p>
+
+<p>MRSA (Methilicin Resistenter Staphylococcus Aureus) wird häufig als Krankenhauskeim bezeichnet, etwa jeder fünfte Deutsche trägt den Keim auf der Haut. Der Darmkeim VRE (Vancomycin Resistente Enterokokken) und die Keimgruppe ESBL (Extended-Spectrum-Betalaktamase) sind seltener, aber gefährlicher. Und sie verbreiten sich seit Jahren immer stärker.</p>
+
+<p>Neben den einzelnen Keimen zeigen wir unter dem Label MRE ein Gesamtbild der Problematik. Die Bezeichnung MRE umfasst alle gemeldeten “Komplexbehandlungen” von multiresistenten Erregern. Im Klartext: Wenn ein Patient im Krankenhaus wegen eines oder mehrerer Keime isoliert werden musste. Dieser Patient – in der Abrechnungssprache: dieser Fall – kann auch mehrere Keime tragen, zum Beispiel gleichzeitg MRSA und VRE. Daher ist die Zahl der addierten Keim-Diagnosen höher als die Zahl der gemeldeten Fälle mit Komplexbehandlungen.</p>
+
+<p>Die Daten nehmen Bezug auf den Wohnort der Patienten, nicht auf den Ort des Krankenhauses. Damit kann es eventuell Verfälschungen geben, wenn viele Patienten aus einem ländlichen Kreis in ein großes Krankenhaus in der Stadt eingeliefert werden. Abgeschwächt wird diese Verfälschung dadurch, dass die Daten auf Landkreisebene verfügbar sind und damit fast immer mehrere Krankenhäuser erfassen.</p>
+
+<p>Die Berechnung “pro 1000 Krankenhauspatienten” hilft uns, die Zahl der Fälle und Diagnosen ins Verhältnis zu setzen. Große Städte haben logischerweise mehr Patienten und damit auch mehr Erreger, als kleine Landkreise. Die Krankenhauspatienten sind den Kreisen und Städten ebenfalls nach ihrem Wohnort zugeordnet, so dass sie mit den gemeldeten Keimfällen vergleichbar sind.</p>
+
+<p>Experten sind sich sicher, dass selbst die hier gemeldeten Fälle noch deutlich unterschätzt sind. Die Techniker Krankenkasse zum Beispiel geht davon aus, dass in den Abrechnunge nur ein Drittel der tatsächlichen Infektionen erkannt werden können.</p>
+
+<p>Die Abrechnungsdaten liegen deutlich höher als die Daten des Robert-Koch-Institutes. Das RKI sammelt ausschließlich die Daten zu MRSA, nicht zu VRE oder ESBL. Es sammelt zudem ausschließlich die in einem Labor in Blut oder Rückenmarksflüssigkeit nachgewiesenen Infektionsfälle mit MRSA. Über die Abrechnungsdaten sind dagegen alle Diagnosen von MRSA erfasst, also auch Fälle, bei denen das Virus nicht in Blut oder Rückenmarksflüssigkeit nachgewiesen wurde, sondern am Wundrand, in der Nase oder der Haut.</p>
+
+
+<h3>Was sagen uns diese Daten nicht?</h3>
+
+<p>In den Daten sind sowohl alle Infektionen als auch alle Besiedelungen enthalten. Also: Nicht nur Patienten, die MRSA, VRE oder ESBL bereits im Körper tragen, zum Beispiel als Blutvergiftung oder Harnwegsinfektion. Sondern auch alle Patienten, die den Keim auf der Haut tragen und damit zwar ein erhöhtes Risiko, aber noch keine Infektion haben. Die besiedelten Keimträger können die Erreger jedoch an andere Patienten und das Personal verteilen und müssen deshalb im Krankenhaus genau so isoliert werden wie auch die Infizierten selbst.</p>
+
+<p>Wir können leider nicht zeigen, wie viele Keime und Behandlungen die einzelnen Krankenhäuser abrechnen. Die Daten sind lediglich auf Ebene der Landkreise verfügbar. Weder die Krankenkassen, noch das Statistiche Bundesamt geben diese Daten heraus. Einige Krankenkassen haben Angst, dass sie von den Krankenhäusern verklagt werden. Das Statistiche Bundesamt verweist auf §16 des Bundesstatistikgesetzes. Der besagt: Einzelangaben dürfen nicht weitergegeben werden.</p>
+
+<p>Die Daten zeigen alle Patienten mit multiresistenten Erregern, die in Krankenhäusern auffallen. Für ambulante Behandlungen von multiresistenten Erregern, zum Beispiel beim Hausarzt, gibt es keine so detaillierte Statistik.</p>
+
+<p>Nicht alle in den Daten enthaltenen Infektionen und Besiedlungen haben die Patienten im Krankenhaus bekommen. Erfasst sind im Gegenteil alle abgerechneten Keime, egal ob mitgebracht oder neu erworben. Die erst im Krankenhaus übertragenen Keime machen wissenschaftlichen Studien zufolge etwa zwei Drittel der Keime aus.</p>
+
+<p>Wir können nicht für jeden Landkreis einzeln sagen, wie viele der Patienten mit multiresistenten Erregern im Blut oder auf der Haut gestorben sind. Das können wir nur auf Bundesebene. Für das Jahr 2013 zeigen die Daten, dass von knapp 300.000 gemeldeten Diagnosen im Jahr 2013 zehn Prozent bei anschließend tot entlassenen Patienten diagnostiziert wurden. Ob die Patienten mit den mehr als 30.000 Diagnosen an den Keimen gestorben sind oder ob sie diese nur zusätzlich zu ihrer tödlichen Erkrankung trugen, ist aus den Daten nicht abzulesen.</p>
+
+
+<h3>Welche Verfälschungen können die Daten haben?</h3>
+
+<p>Die von uns ausgewerteten Abrechnungsdaten fließen in ein kompliziertes Berechnungssystem ein, dass sich in Teilen von Jahr zu Jahr ändert. Manche Diagnosen bringen mehr Geld für die Krankenhäuser, manche bringen weniger ein. Daher ist nicht ausgeschlossen, dass manche Kliniken bestimmte Behandlungen besonders häufig abrechnen, um besonders viel Geld zu machen. Eigentlich ist jedoch vorgesehen, dass jede Diagnose kodiert wird – unabhängig von der dahinter stehenden Vergütung.</p>
+
+<p>Zusätzlich kann es – vor allem in kleineren Kliniken – vorkommen, dass Ärzte und die Verwaltung mit bestimmten Abrechnungsarten weniger vertraut sind. Oder dass Ärzte von Beginn an falsche Diagnosen stellen.</p>
+
+<p>Kann auch sein, dass Ärzte und anderes Personal in den Kliniken die Abrechnungsnummern nicht kennen oder von Beginn an falsche Diagnosen stellen. Wenn Krankenhäuser in einer bestimmten Region also besonders gut und für das Keimproblem sensibilisierte Ärzte beschäftigen, kann auch dadurch die Zahl der abgerechneten multiresistenten Erreger steigen.</p>
+
+<p>Die Daten sind deshalb gut, um einen Überblick über das Problem zu geben. Und um zu zeigen, dass sich etwas tun muss in der Bekämpfung multiresistenter Erreger. Sie sind nicht dazu geeignet, jeden einzelnen Fall exakt nachzuhalten.</p>
+
+
+<h3>Woher kommen die Daten?</h3>
+
+<p>Die Daten sind eine Sonderauswertung des Statistischen Bundesamtes und kommen von den knapp 2000 deutschen Krankenhäusern, die am offiziellen DRG-Abrechnungssystem teilnehmen. Das sind mit ganz wenigen Ausnahmen alle deutschen Krankenhäuser. Auf dieser Grundlage werden die Behandlungen vergütet. Das Statistische Bundesamt bekommt einen Abzug dieser Daten.</p>
+
+<p>Wer sich richtig genau informieren will: MRSA entspricht in unserer Auswertung dem ICD-Code U80.0, VRE entspricht der Addition der ICD-Codes U80.2 und U80.3, ESBL entspricht dem ICD-Code U80.4 und MRE entspricht dem Code OPS 8-987.</p>
+
+<p><a href="https://github.com/correctiv/keimkarte">Den SourceCode für diese Anwendung findet Ihr auf unserem Github-Account.</a></p>
+
+
+<p>Verantwortlich: David Schraven<br/>
+Redaktion: Daniel Drepper in Kooperation mit ZEIT, ZEIT ONLINE und FUNKE-Mediengruppe<br/>
+Entwicklung der Karte: Stefan Wehrmeyer
+</p>
+<hr/>
+<p>
+  <a href="https://www.correctiv.org/impressum/">Impressum</a><br/>
+  Kontakt: info [at] correctiv.org
+</p>
+      <p>
+        <a class="correctiv" href="https://www.correctiv.org/" target="_blank">
+        Correctiv</a>
+      </p>
       </div>
     </div>
   </div>
