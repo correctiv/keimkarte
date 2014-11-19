@@ -303,8 +303,10 @@
 
     var shareUrl = window.encodeURIComponent(document.location.href);
     var shareText = document.title;
+    var imageUrl = ' https://apps.correctiv.org/media/keime/img/gifs/mre.gif';
     if (this.activated) {
       shareText = window.encodeURIComponent(this.showPlaceholderLabel(this.state.key));
+      imageUrl = ' https://apps.correctiv.org/media/keime/img/gifs/' + this.state.kreis + '/' + this.state.kreis + '_mre.gif';
       d3.selectAll('.current').text(this.showPlaceholder(this.state.key));
       if (this.state.key !== 'mre_rise') {
         d3.selectAll('.current_label').text(this.showPlaceholderLabel(this.state.key));
@@ -322,7 +324,7 @@
     d3.selectAll('.facebook-share').attr('href',
       'https://www.facebook.com/sharer/sharer.php?u=' + shareUrl + '&t=' + shareText);
     d3.selectAll('.twitter-share').attr('href',
-        'https://twitter.com/share?text=' + window.encodeURIComponent('@correctiv_org #keime') + '&url=' + shareUrl);
+        'https://twitter.com/share?text=' + window.encodeURIComponent('#tödlichekeime @correctiv_org' + imageUrl) + '&url=' + shareUrl);
     d3.selectAll('.gplus-share').attr('href',
         'https://plus.google.com/share?url=' + shareUrl);
     d3.selectAll('.mail-share').attr('href',
