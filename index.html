@@ -23,6 +23,7 @@ layout: default
               <div class="clearfix">
                 <h2 class="kreis-name pull-left"></h2>
                 <p class="pull-right">
+                  <strong class="current"></strong> Fälle /
                   <strong class="current_p"></strong> Fälle pro 1000 /
                   <strong class="current_rank"></strong>. Platz
                   <!-- <strong><span class="mrerise"></span>%</strong><i class="mrerise-icon"></i> -->
@@ -38,6 +39,7 @@ layout: default
             <div class="clearfix">
               <h2 class="kreis-name pull-left"></h2>
               <p class="pull-right">
+                <strong class="current"></strong> Fälle /
                 <strong class="current_p"></strong> Fälle pro 1000 /
                 <strong class="current_rank"></strong>. Platz
                 im Jahr <strong class="current_year"></strong>
@@ -54,6 +56,7 @@ layout: default
                 <thead>
                   <tr>
                     <th>Erreger</th>
+                    <th class="number">Fälle</th>
                     <th class="number">pro 1000 Patienten</th>
                     <th class="number">Veränderung 2010 - 2013</th>
                     <th class="number">Platz</th>
@@ -62,6 +65,9 @@ layout: default
                 <tbody>
                   <tr class="mrsa-color">
                     <td><span>MRSA</span></td>
+                    <td class="number">
+                      <span class="mrsa"></span>
+                    </td>
                     <td class="number">
                       <span class="mrsa_p"></span>
                     </td>
@@ -75,6 +81,9 @@ layout: default
                   <tr class="esbl-color">
                     <td><span>ESBL</span></td>
                     <td class="number">
+                      <span class="esbl"></span>
+                    </td>
+                    <td class="number">
                       <span class="esbl_p"></span>
                     </td>
                     <td class="number">
@@ -86,6 +95,9 @@ layout: default
                   </tr>
                   <tr class="vre-color">
                     <td><span>VRE</span></td>
+                    <td class="number">
+                      <span class="vre"></span>
+                    </td>
                     <td class="number">
                       <span class="vre_p"></span>
                     </td>
@@ -123,10 +135,10 @@ layout: default
               </div>
               <div class="pull-right">
                 <a class="mre-btn btn btn-default btn-xs" data-key="mre" href="">
-                  MRE
+                  MRE-Isolationen
                 </a>
                 <a class="mre_rise-btn btn btn-default btn-xs" data-key="mre_rise" href="">
-                  Veränderung MRE
+                  Veränderung MRE-Isolationen
                 </a>
               </div>
             </div>
@@ -213,7 +225,7 @@ layout: default
 
 <p>MRSA (Methicillin Resistenter Staphylococcus Aureus) wird häufig als Krankenhauskeim bezeichnet, etwa jeder fünfte Deutsche trägt den Keim auf der Haut. Der Darmkeim VRE (Vancomycin Resistente Enterokokken) und die Keimgruppe ESBL (Extended-Spectrum-Betalaktamase) sind seltener, aber gefährlicher. Und sie verbreiten sich seit Jahren immer stärker.</p>
 
-<p>Neben den einzelnen Keimen zeigen wir unter dem Label MRE ein Gesamtbild der Problematik. Die Bezeichnung MRE umfasst alle gemeldeten “Komplexbehandlungen” von multiresistenten Erregern. Im Klartext: Wenn ein Patient im Krankenhaus wegen eines oder mehrerer Keime isoliert werden musste. Dieser Patient – in der Abrechnungssprache: dieser Fall – kann auch mehrere Keime tragen, zum Beispiel gleichzeitg MRSA und VRE. Die Abrechnungen von Komplexbehandlungen („MRE“) sind nicht gekoppelt an die Abrechnungen einzelner Keime. In manchen Kreisen sind daher zum Beispiel mehr MRSA-Keime abgerechnet, als Komplexbehandlungen. So ist auch die Zahl der addierten Keim-Diagnosen höher als die Zahl der gemeldeten Fälle mit Komplexbehandlungen.</p>
+<p>Neben den einzelnen Keimen zeigen wir unter dem Label MRE-Isolationen ein Gesamtbild der Problematik. Die Bezeichnung MRE-Isolationen umfasst alle gemeldeten „Komplexbehandlungen“ von multiresistenten Erregern. Im Klartext: Wenn ein Patient im Krankenhaus wegen eines oder mehrerer Keime isoliert werden musste. Dieser Patient – in der Abrechnungssprache: dieser Fall – kann auch mehrere Keime tragen, zum Beispiel gleichzeitg MRSA und VRE. Die Abrechnungen von Komplexbehandlungen („MRE-Isolationen“) sind nicht gekoppelt an die Abrechnungen einzelner Keime. In manchen Kreisen sind daher zum Beispiel mehr MRSA-Keime abgerechnet, als Komplexbehandlungen. So ist auch die Zahl der addierten Keim-Diagnosen höher als die Zahl der gemeldeten Fälle mit Komplexbehandlungen.</p>
 
 <p>Die Daten nehmen Bezug auf den Wohnort der Patienten, nicht auf den Ort des Krankenhauses. Damit kann es eventuell Verfälschungen geben, wenn viele Patienten aus einem ländlichen Kreis in ein großes Krankenhaus in der Stadt eingeliefert werden. Abgeschwächt wird diese Verfälschung dadurch, dass die Daten auf Landkreisebene verfügbar sind und damit fast immer mehrere Krankenhäuser erfassen.</p>
 

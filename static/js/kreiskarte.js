@@ -44,18 +44,18 @@
       dimensions: {
         mre_rise: {
           key: 'mre_rise',
-          label: 'Veränderung MRE 2010 - 2013',
+          label: 'Veränderung Isolationen 2010 - 2013',
           range: ["#b8e186", "#e6f5d0", "#fde0ef", "#f1b6da", "#de77ae", "#c51b7d", "#8e0152"],
           domain: [-100, 0, 100, 200, 300],
           scale: 'quantize',
           makeLabel: function(d){ return d + '%'; },
           getHTML: function(d) {return d.properties.mre_rise > 0 ?
-                                    d.properties.mre_rise + '% MRE-Anstieg' :
-                                    d.properties.mre_rise + '% MRE-Verringerung';}
+                                    d.properties.mre_rise + '% Isolationen-Anstieg' :
+                                    d.properties.mre_rise + '% Isolationen-Verringerung';}
         },
         mre: {
           key: 'mre_p',
-          label: 'MRE-Fälle pro 1000 Patienten',
+          label: 'Isolations-Fälle pro 1000 Patienten',
           range: ["#edf8fb","#bfd3e6","#9ebcda","#8c96c6","#8c6bb1","#88419d","#6e016b"],
           scale: 'quantize',
           scaleId: 'p1000',
@@ -92,9 +92,9 @@
         }
       },
       placeholders: ['mre_2013', 'mre_p_2013', 'mre_rank_2013', 'mre_rise',
-                    'mrsa_p', 'mrsa_rank', 'mrsa_rise',
-                    'esbl_p', 'esbl_rank', 'esbl_rise',
-                    'vre_p', 'vre_rank', 'vre_rise']
+                    'mrsa', 'mrsa_p', 'mrsa_rank', 'mrsa_rise',
+                    'esbl', 'esbl_p', 'esbl_rank', 'esbl_rise',
+                    'vre', 'vre_p', 'vre_rank', 'vre_rise']
     };
     this.options = {};
     for (var k in defaultOptions) {
@@ -310,10 +310,12 @@
       d3.selectAll('.current').text(this.showPlaceholder(this.state.key));
       if (this.state.key !== 'mre_rise') {
         d3.selectAll('.current_label').text(this.showPlaceholderLabel(this.state.key));
+        d3.selectAll('.current').text(this.showPlaceholder(this.state.key));
         d3.selectAll('.current_p').text(this.showPlaceholder(this.state.key + '_p'));
         d3.selectAll('.current_rank').text(this.showPlaceholder(this.state.key + '_rank'));
       } else {
         d3.selectAll('.current_label').text(this.showPlaceholderLabel('mre_rise'));
+        d3.selectAll('.current').text(this.showPlaceholder('mre_2013'));
         d3.selectAll('.current_p').text(this.showPlaceholder('mre_p_2013'));
         d3.selectAll('.current_rank').text(this.showPlaceholder('mre_rank_2013'));
       }
