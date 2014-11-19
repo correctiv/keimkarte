@@ -30,27 +30,38 @@
     options = options || {};
     var defaultOptions = {
       containerId: 'vis',
-      topojsonFile: 'static/geo/kreise.topojson',
-      plzFile: 'static/geo/plz.csv',
+      topojsonFile: 'geo/kreise.topojson',
+      staticPath: 'static/',
       plzInput: 'plz-input',
       bounds: [],
       noControls: false,
       baseScale: 7.3,
-      defaultDataKey: 'mrerise',
+      defaultDataKey: 'mre',
+      defaultYear: '2013',
       scales: {
         p1000: ['mrsa', 'vre', 'esbl']
       },
       dimensions: {
-        mrerise: {
-          key: 'mrerise',
+        mre_rise: {
+          key: 'mre_rise',
           label: 'Veränderung MRE 2010 - 2013',
           range: ["#b8e186", "#e6f5d0", "#fde0ef", "#f1b6da", "#de77ae", "#c51b7d", "#8e0152"],
           domain: [-100, 0, 100, 200, 300],
           scale: 'quantize',
           makeLabel: function(d){ return d + '%'; },
-          getHTML: function(d) {return d.properties.mrerise > 0 ?
-                                    d.properties.mrerise + '% MRE-Anstieg' :
-                                    d.properties.mrerise + '% MRE-Verringerung';}
+          getHTML: function(d) {return d.properties.mre_rise > 0 ?
+                                    d.properties.mre_rise + '% MRE-Anstieg' :
+                                    d.properties.mre_rise + '% MRE-Verringerung';}
+        },
+        mre: {
+          key: 'mre_p',
+          label: 'MRE-Fälle pro 1000 Patienten',
+          range: ["#edf8fb","#bfd3e6","#9ebcda","#8c96c6","#8c6bb1","#88419d","#6e016b"],
+          scale: 'quantize',
+          scaleId: 'p1000',
+          domain: [0],
+          getHTML: genericGetHTML,
+          years: [2010, 2011, 2012, 2013]
         },
         mrsa: {
           key: 'mrsa_p',
@@ -78,21 +89,12 @@
           scaleId: 'p1000',
           domain: [0],
           getHTML: genericGetHTML
-        },
-        mre: {
-          key: 'mre_p',
-          label: 'MRE-Fälle pro 1000 Patienten',
-          range: ["#edf8fb","#bfd3e6","#9ebcda","#8c96c6","#8c6bb1","#88419d","#6e016b"],
-          scale: 'quantize',
-          scaleId: 'p1000',
-          domain: [0],
-          getHTML: genericGetHTML
         }
       },
-      placeholders: ['mre', 'mre_p', 'mre_rank', 'mrerise',
-                    'mrsa_p', 'mrsa_rank',
-                    'esbl_p', 'esbl_rank',
-                    'vre_p', 'vre_rank']
+      placeholders: ['mre_2013', 'mre_p_2013', 'mre_rank_2013', 'mre_rise',
+                    'mrsa_p', 'mrsa_rank', 'mrsa_rise',
+                    'esbl_p', 'esbl_rank', 'esbl_rise',
+                    'vre_p', 'vre_rank', 'vre_rise']
     };
     this.options = {};
     for (var k in defaultOptions) {
@@ -113,13 +115,28 @@
     this.unit = this.dim / 400;
     this.minHeight = 400;
 
+    // Copy over html to modal
+    $('#kreis-modal .modal-body').html($('.modal-copy').html());
+
     var self = this;
     d3.selectAll('.key-btns .btn').on('click', function(){
       d3.event.preventDefault();
       self.state.key = $(this).data('key');
+      if (self.state.key !== 'mre') {
+        self.state.jahr = '';
+      } else {
+        self.state.jahr = $('.yearslider input').val();
+      }
       self.updateMap();
       self.updateState();
     });
+
+    d3.selectAll('.yearslider input').on('input', function(){
+      self.state.jahr = this.value;
+      self.updateMap();
+      self.updateState();
+    });
+
 
     this.kreisCircle = d3.scale.sqrt()
       .range([0, 15/756 * this.dim]);
@@ -148,13 +165,40 @@
     this.path = d3.geo.path()
       .projection(this.projection);
 
-    d3.json(this.options.topojsonFile, function(error, data){
+    d3.json(this.options.staticPath + this.options.topojsonFile, function(error, data){
       self.drawMap(error, data);
     });
-    d3.csv(this.options.plzFile, function(error, data){
+    d3.csv(this.options.staticPath + 'geo/plz.csv', function(error, data){
       self.processPostcodes(error, data);
     });
   };
+
+  Kreiskarte.prototype.getValue = function(d, dim, year) {
+    if (year && d.properties[dim + '_' + year] !== undefined) {
+      return d.properties[dim + '_' + year];
+    } else {
+      return d.properties[dim];
+    }
+  };
+
+  Kreiskarte.prototype.showPlaceholder = function(placeholder, elem) {
+    if (!elem) {
+      elem = this.activated;
+    }
+    if (placeholder.indexOf('mre_rise') !== -1) {
+      return this.getValue(elem, 'mre_rise') + '%';
+    }
+    if (placeholder.indexOf('mre') !== -1) {
+      return Math.round(this.getValue(elem, placeholder, this.state.jahr));
+    }
+    return Math.round(this.getValue(elem, placeholder));
+  };
+
+  Kreiskarte.prototype.showPlaceholderLabel = function(placeholder, elem) {
+    var s = this.showPlaceholder(this.options.dimensions[placeholder].key, elem);
+    return s+ ' ' +this.options.dimensions[placeholder].label;
+  };
+
 
   Kreiskarte.prototype.postInit = function() {
     if (!(this.features && this.plz)) {
@@ -164,7 +208,8 @@
     var self = this;
 
     this.state = {
-      key: this.options.defaultDataKey
+      key: this.options.defaultDataKey,
+      jahr: this.options.defaultYear
     };
 
     var newState = getQueryObject();
@@ -247,26 +292,41 @@
     d3.selectAll('.key-btns .btn').classed('btn-success', false);
     d3.selectAll('.key-btns .' + this.state.key + '-btn').classed('btn-success', true);
 
-    if (this.activated) {
-      d3.selectAll('.current').text(Math.round(this.activated.properties[this.state.key]));
-      if (this.state.key !== 'mrerise') {
-        d3.selectAll('.current_label').text(Math.round(this.activated.properties[this.state.key + '_p']) + ' ' +this.options.dimensions[this.state.key].label);
-        d3.selectAll('.current_p').text(Math.round(this.activated.properties[this.state.key + '_p']));
-        d3.selectAll('.current_rank').text(Math.round(this.activated.properties[this.state.key + '_rank']));
-      } else {
-        d3.selectAll('.current_label').text(Math.round(this.activated.properties.mrerise) + '% ' +this.options.dimensions[this.state.key].label);
-        d3.selectAll('.current_p').text(Math.round(this.activated.properties.mre_p));
-        d3.selectAll('.current_rank').text(Math.round(this.activated.properties.mre_rank));
-      }
-      d3.selectAll('.facebook-share').attr('href',
-        'https://www.facebook.com/sharer/sharer.php?u=&t=');
-      d3.selectAll('.twitter-share').attr('href',
-          'https://www.facebook.com/sharer/sharer.php?u=&t=');
-      d3.selectAll('.gplus-share').attr('href',
-          'https://www.facebook.com/sharer/sharer.php?u=&t=');
-      d3.selectAll('.mail-share').attr('href',
-          'mailto:?subject=&body=' + this.activated.properties.name);
+    if (this.state.jahr) {
+      $('.yearslider input').val(this.state.jahr);
     }
+    if (this.state.key === 'mre') {
+      d3.selectAll('.yearslider').style('display', 'block');
+    } else {
+      d3.selectAll('.yearslider').style('display', 'none');
+    }
+
+    var shareUrl = window.encodeURIComponent(document.location.href);
+    var shareText = document.title;
+    if (this.activated) {
+      shareText = window.encodeURIComponent(this.showPlaceholderLabel(this.state.key));
+      d3.selectAll('.current').text(this.showPlaceholder(this.state.key));
+      if (this.state.key !== 'mre_rise') {
+        d3.selectAll('.current_label').text(this.showPlaceholderLabel(this.state.key));
+        d3.selectAll('.current_p').text(this.showPlaceholder(this.state.key + '_p'));
+        d3.selectAll('.current_rank').text(this.showPlaceholder(this.state.key + '_rank'));
+      } else {
+        d3.selectAll('.current_label').text(this.showPlaceholderLabel('mre_rise'));
+        d3.selectAll('.current_p').text(this.showPlaceholder('mre_p'));
+        d3.selectAll('.current_rank').text(this.showPlaceholder('mre_rank'));
+      }
+    } else {
+      d3.selectAll('.current_label').text(this.options.dimensions[this.state.key].label);
+    }
+    d3.selectAll('.current_year').text(this.state.jahr);
+    d3.selectAll('.facebook-share').attr('href',
+      'https://www.facebook.com/sharer/sharer.php?u=' + shareUrl + '&t=' + shareText);
+    d3.selectAll('.twitter-share').attr('href',
+        'https://twitter.com/share?text=&url=' + shareUrl);
+    d3.selectAll('.gplus-share').attr('href',
+        'https://plus.google.com/share?url=' + shareUrl);
+    d3.selectAll('.mail-share').attr('href',
+        'mailto:?subject=' + shareText + '&body=' + shareUrl);
   };
 
   Kreiskarte.prototype.drawMap = function(error, kreise) {
@@ -285,7 +345,19 @@
       .attr('class', 'kreise');
 
     var get = function(dim) {
-      return function(d) { return d.properties[dim]; };
+      var key = self.options.dimensions[dim].key;
+      return function(d) {
+        var years = self.options.dimensions[dim].years;
+        if (years) {
+          var m = -Infinity;
+          for (var i = 0; i < years.length; i++) {
+            m = Math.max(m, self.getValue(d, key, years[i]));
+          }
+          return m;
+        } else {
+          return self.getValue(d, key);
+        }
+      };
     };
     for (var dim in this.options.dimensions) {
       var dimension = this.options.dimensions[dim];
@@ -302,7 +374,7 @@
             var members = this.options.scales[dimension.scaleId];
             var maxScale = -Infinity;
             for (var i = 0; i < members.length; i += 1) {
-              maxScale = Math.max(maxScale, d3.max(this.features, get(this.options.dimensions[this.options.scales[dimension.scaleId][i]].key)));
+              maxScale = Math.max(maxScale, d3.max(this.features, get(this.options.scales[dimension.scaleId][i])));
             }
             arr.push(maxScale);
           } else {
@@ -339,16 +411,16 @@
       .on('mousemove', function(d){
         if (isTouch()) { return; }
         var offset = $('#vis').offset();
-        var x = d3.event.x + offset.left - 60;
+        var x = (d3.event.x || d3.event.clientX) + offset.left - 60;
         if (x > self.width - 300) {
           x -= 100;
         } else if (x < 60) {
           x += 60;
         }
-        var y = d3.event.y + offset.top  - 60;
+        var y = (d3.event.y || d3.event.clientY) + offset.top  - 60;
 
         $('#hoverlabel').find('.hl-name').text(d.properties.name);
-        $('#hoverlabel').find('.hl-value').text(self.options.dimensions[self.state.key].getHTML(d));
+        $('#hoverlabel').find('.hl-value').text(self.showPlaceholderLabel(self.state.key, d));
 
         $('#hoverlabel')
           .show()
@@ -377,44 +449,47 @@
       .attr('d', this.path)
       .attr('class', 'land-grenze');
 
-    this.dorling = this.svg.append('g')
-      .attr('class', 'dorling');
-    this.dorling.selectAll('.kreis-circle').data(this.features).enter()
-      .append('circle')
-      .attr('class', function(d) { return 'kreis-circle kreis-circle-' + d.id; })
-      .each(function(d) {
-        d.properties.c = self.path.centroid(d);
-        d.properties.x = 400;
-        d.properties.y = 300;
-      })
-      .attr('cx',function(d) { return d.properties.x + d.properties.c[0] - 400; })
-      .attr('cy',function(d) { return d.properties.y + d.properties.c[1] - 300; })
-      .on('click', function(d){
-        if (self.state.kreis === d.id) { return; }
-        self.state.kreis = d.id;
-        self.activateKreis(d.id);
-        self.updateState();
-      });
+    if (this.options.dorling) {
+      this.dorling = this.svg.append('g')
+        .attr('class', 'dorling');
+      this.dorling.selectAll('.kreis-circle').data(this.features).enter()
+        .append('circle')
+        .attr('class', function(d) { return 'kreis-circle kreis-circle-' + d.id; })
+        .each(function(d) {
+          d.properties.c = self.path.centroid(d);
+          d.properties.x = 400;
+          d.properties.y = 300;
+        })
+        .attr('cx',function(d) { return d.properties.x + d.properties.c[0] - 400; })
+        .attr('cy',function(d) { return d.properties.y + d.properties.c[1] - 300; })
+        .on('click', function(d){
+          if (self.state.kreis === d.id) { return; }
+          self.state.kreis = d.id;
+          self.activateKreis(d.id);
+          self.updateState();
+        });
+    }
 
-    this.places = this.svg.append('g')
-      .attr('class', 'places');
-    this.places.selectAll('.shadow')
-      .data(topojson.feature(kreise, kreise.objects.places).features)
-      .enter()
-        .append('text')
-        .attr('class', 'place-label shadow')
-        .attr('dx', -5)
-        .attr("transform", function(d) { return "translate(" + self.projection(d.geometry.coordinates) + ")"; })
-        .text(function(d) { return d.properties.cityname; });
-    this.places.selectAll('.label')
-      .data(topojson.feature(kreise, kreise.objects.places).features)
-      .enter()
-        .append('text')
-        .attr('class', 'place-label label')
-        .attr('dx', -5)
-        .attr("transform", function(d) { return "translate(" + self.projection(d.geometry.coordinates) + ")"; })
-        .text(function(d) { return d.properties.cityname; });
-
+    if (!this.options.noControls) {
+      this.places = this.svg.append('g')
+        .attr('class', 'places');
+      this.places.selectAll('.shadow')
+        .data(topojson.feature(kreise, kreise.objects.places).features)
+        .enter()
+          .append('text')
+          .attr('class', 'place-label shadow')
+          .attr('dx', -5)
+          .attr("transform", function(d) { return "translate(" + self.projection(d.geometry.coordinates) + ")"; })
+          .text(function(d) { return d.properties.cityname; });
+      this.places.selectAll('.label')
+        .data(topojson.feature(kreise, kreise.objects.places).features)
+        .enter()
+          .append('text')
+          .attr('class', 'place-label label')
+          .attr('dx', -5)
+          .attr("transform", function(d) { return "translate(" + self.projection(d.geometry.coordinates) + ")"; })
+          .text(function(d) { return d.properties.cityname; });
+    }
     this.postInit();
   };
 
@@ -427,8 +502,9 @@
 
     this.kreise.selectAll('.kreis')
       .style('fill', function(d){
-        if (d.properties[dimension.key] !== null) {
-          return kreisColor(d.properties[dimension.key]);
+        var val = self.getValue(d, dimension.key, self.state.jahr)
+        if (val !== null) {
+          return kreisColor(val);
         } else {
           return 'none';
         }
@@ -438,12 +514,6 @@
       .domain(kreisColor.domain())
       .range(kreisColor.range());
 
-    //
-    // domain: 23 - 25
-    // range: #fff, #f00, #f0f
-    //
-    // range:
-    // domain: #fff, #f00, #f0f
     var legendWidth = 20;
     this.legend.attr('width', legendWidth * kreisColor.range().length);
     this.legend.selectAll('rect').remove();
@@ -480,13 +550,15 @@
             y: 25
           });
 
-    // this.dorling.selectAll('.kreis-circle')
-    //   // .style('fill', function(d){
-    //   //   return kreisColor(d.properties[dimension.key]);
-    //   // })
-    //   .attr('r', function(d) {
-    //     return self.kreisCircle(d.properties.count);
-    //   });
+    if (this.options.dorling) {
+      this.dorling.selectAll('.kreis-circle')
+        .style('fill', function(d){
+          return kreisColor(d.properties[dimension.key]);
+        })
+        .attr('r', function(d) {
+          return self.kreisCircle(d.properties.count);
+        });
+    }
 
   };
 
@@ -541,25 +613,25 @@
       d3.selectAll('.kreis-name').text(d.properties.name);
       for (var i = 0; i < this.options.placeholders.length; i++) {
         var placeholder = this.options.placeholders[i];
-        d3.selectAll('.' + placeholder).text(Math.round(d.properties[placeholder]));
+        d3.selectAll('.' + placeholder).text(d.properties[placeholder]);
       }
-      if (d.properties.mrerise === null) {
-        d3.selectAll('.mrerise-section').style('display', 'none');
+      if (d.properties.mre_rise === null) {
+        d3.selectAll('.mre_rise-section').style('display', 'none');
       } else {
-        d3.select('.mrerise-section').style('display', 'inline');
-        d3.selectAll('.mrerise').text(Math.round(Math.abs(d.properties.mrerise)));
-        if (d.properties.mrerise < 0) {
-          d3.selectAll('.mrerise-label').text('verringert');
-          d3.selectAll('.mrerise-icon').classed('icon-up-circled', false);
-          d3.selectAll('.mrerise-icon').classed('icon-down-circled', true);
-        } else if (d.properties.mrerise > 0) {
-          d3.selectAll('.mrerise-label').text('erhöht');
-          d3.selectAll('.mrerise-icon').classed('icon-down-circled', false);
-          d3.selectAll('.mrerise-icon').classed('icon-up-circled', true);
+        d3.select('.mre_rise-section').style('display', 'inline');
+        d3.selectAll('.mre_rise').text(Math.abs(d.properties.mre_rise));
+        if (d.properties.mre_rise < 0) {
+          d3.selectAll('.mre_rise-label').text('verringert');
+          d3.selectAll('.mre_rise-icon').classed('icon-up-circled', false);
+          d3.selectAll('.mre_rise-icon').classed('icon-down-circled', true);
+        } else if (d.properties.mre_rise > 0) {
+          d3.selectAll('.mre_rise-label').text('erhöht');
+          d3.selectAll('.mre_rise-icon').classed('icon-down-circled', false);
+          d3.selectAll('.mre_rise-icon').classed('icon-up-circled', true);
         } else {
-          d3.selectAll('.mrerise-icon').classed('icon-down-circled', false);
-          d3.selectAll('.mrerise-icon').classed('icon-up-circled', false);
-          d3.selectAll('.mrerise-label').text('verändert');
+          d3.selectAll('.mre_rise-icon').classed('icon-down-circled', false);
+          d3.selectAll('.mre_rise-icon').classed('icon-up-circled', false);
+          d3.selectAll('.mre_rise-label').text('verändert');
         }
       }
       d3.selectAll('.mrsa_p').attr('title', d.properties.mrsa + ' Fälle');
@@ -590,7 +662,7 @@
       var centroid = this.path.centroid(d);
       x = centroid[0];
       y = centroid[1];
-      k = 5;
+      k = this.options.noControls ? 8 : 5;
       tw = this.width / 2;
       th = this.height / 2;
       this.svg.classed('zoomed', true);

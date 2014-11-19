@@ -22,7 +22,11 @@ body {
 }*/
 
 h4, p, hr {
-  margin: 0.5em 0;
+  margin: 0.2em 0;
+}
+
+.modal-body p {
+  margin: 0.8em 0;
 }
 
 .vis {
@@ -34,6 +38,13 @@ h4, p, hr {
 
 #controls {
   overflow-y: scroll;
+  min-height: 220px;
+  /*min-width: 320px;*/
+}
+
+#controls {
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 #legende {
@@ -133,6 +144,12 @@ h4, p, hr {
 .zoomed .place-label.shadow {
   stroke-width: 1px;
 }
+
+.nocontrols .place-label {
+  display: none;
+}
+
+
 @media (max-width: 768px) {
   .place-label {
     display: none;
@@ -150,6 +167,9 @@ h4, p, hr {
   margin: 0.2em;
 }
 
+.plz-search {
+  padding-bottom: 2px;
+}
 .plz-input.wrong {
   outline: 1px solid red;
 }
@@ -170,7 +190,7 @@ h4, p, hr {
   padding: 2px;
 }
 
-.table td span {
+.table td > span {
   background-color: rgba(255, 255, 255, 0.6);
   padding: 0.1em;
 }
@@ -182,6 +202,12 @@ h4, p, hr {
 .share-link, .share-link:hover {
   text-decoration: none;
   font-size: 24px;
+  margin: 0;
+  width: 28px;
+}
+
+a.share-link > i:before {
+  margin: 0 !important;
 }
 
 #hoverlabel {
@@ -204,6 +230,32 @@ h4, p, hr {
 
 #nocontrol-label, #nocontrol-keylabel {
   display: none;
+}
+
+.yearslider {
+  width: 100%;
+}
+
+.yearslider > input {
+  width: 100%;
+}
+
+.yearslider .yearlabels {
+    width: 100%;
+    display: table;
+    margin-top: -4px;
+}
+
+.yearslider .yearlabels > span {
+  font-size: 9px;
+  display: table-cell;
+  text-align: right;
+  width: auto;
+}
+.yearslider .yearlabels > span:first-child {
+  text-align: left;
+  width: 20px;
+  white-space:nowrap;
 }
 
 .nocontrols #nocontrol-label {
