@@ -11,10 +11,6 @@
     return ('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch;
   };
 
-  var genericGetHTML = function(d) {
-    return Math.round(d.properties[this.key]) + ' ' + this.label;
-  };
-
   function getQueryObject() {
     var query = window.location.search.substring(1);
     var qobj = {};
@@ -44,54 +40,55 @@
       dimensions: {
         mre_rise: {
           key: 'mre_rise',
-          label: 'Veränderung Isolationen 2010 - 2013',
+          label: ' Isolationen 2010 - 2013',
           range: ["#b8e186", "#e6f5d0", "#fde0ef", "#f1b6da", "#de77ae", "#c51b7d", "#8e0152"],
           domain: [-100, 0, 100, 200, 300],
           scale: 'quantize',
           makeLabel: function(d){ return d + '%'; },
-          getHTML: function(d) {return d.properties.mre_rise > 0 ?
-                                    d.properties.mre_rise + '% Isolationen-Anstieg' :
-                                    d.properties.mre_rise + '% Isolationen-Verringerung';}
+          getDetailLabel: function(d) {
+            return d.properties.mre_rise > 0 ?
+                   d.properties.mre_rise + '% Isolationen-Anstieg' :
+                   d.properties.mre_rise + '% Isolationen-Verringerung';
+          }
         },
         mre: {
           key: 'mre_p',
-          label: 'Isolations-Fälle pro 1000 Patienten',
-          range: ["#edf8fb","#bfd3e6","#9ebcda","#8c96c6","#8c6bb1","#88419d","#6e016b"],
+          label: 'Isolations-Fälle pro 1000',
+          range: ["#f7fcfd","#e0ecf4","#bfd3e6","#9ebcda","#8c96c6","#8c6bb1","#88419d","#810f7c","#4d004b"],
           scale: 'quantize',
           scaleId: 'p1000',
           domain: [0],
-          getHTML: genericGetHTML,
           years: [2010, 2011, 2012, 2013]
         },
         mrsa: {
           key: 'mrsa_p',
-          label: 'MRSA-Fälle pro 1000 Patienten',
-          range: ["#edf8fb","#bfd3e6","#9ebcda","#8c96c6","#8c6bb1","#88419d","#6e016b"],
+          label: 'MRSA-Fälle pro 1000',
+          range: ["#f7fcfd","#e0ecf4","#bfd3e6","#9ebcda","#8c96c6","#8c6bb1","#88419d","#810f7c","#4d004b"],
           scale: 'quantize',
           scaleId: 'p1000',
           domain: [0],
-          getHTML: genericGetHTML
+          years: [2010, 2011, 2012, 2013]
         },
         esbl: {
           key: 'esbl_p',
-          label: 'ESBL-Fälle pro 1000 Patienten',
-          range: ["#edf8fb","#bfd3e6","#9ebcda","#8c96c6","#8c6bb1","#88419d","#6e016b"],
+          label: 'ESBL-Fälle pro 1000',
+          range: ["#f7fcfd","#e0ecf4","#bfd3e6","#9ebcda","#8c96c6","#8c6bb1","#88419d","#810f7c","#4d004b"],
           scale: 'quantize',
           scaleId: 'p1000',
           domain: [0],
-          getHTML: genericGetHTML
+          years: [2010, 2011, 2012, 2013]
         },
         vre: {
           key: 'vre_p',
-          label: 'VRE-Fälle pro 1000 Patienten',
-          range: ["#edf8fb","#bfd3e6","#9ebcda","#8c96c6","#8c6bb1","#88419d","#6e016b"],
+          label: 'VRE-Fälle pro 1000',
+          range: ["#f7fcfd","#e0ecf4","#bfd3e6","#9ebcda","#8c96c6","#8c6bb1","#88419d","#810f7c","#4d004b"],
           scale: 'quantize',
           scaleId: 'p1000',
           domain: [0],
-          getHTML: genericGetHTML
+          years: [2010, 2011, 2012, 2013]
         }
       },
-      placeholders: ['mre_2013', 'mre_p_2013', 'mre_rank_2013', 'mre_rise',
+      placeholders: ['mre', 'mre_p', 'mre_rank', 'mre_rise',
                     'mrsa', 'mrsa_p', 'mrsa_rank', 'mrsa_rise',
                     'esbl', 'esbl_p', 'esbl_rank', 'esbl_rise',
                     'vre', 'vre_p', 'vre_rank', 'vre_rise']
@@ -122,7 +119,7 @@
     d3.selectAll('.key-btns .btn').on('click', function(){
       d3.event.preventDefault();
       self.state.key = $(this).data('key');
-      if (self.state.key !== 'mre') {
+      if (self.state.key.indexOf('rise') !== -1) {
         self.state.jahr = '';
       } else {
         self.state.jahr = $('.yearslider input').val();
@@ -134,7 +131,7 @@
     d3.selectAll('.yearslider input').on('input', function(){
       self.state.jahr = this.value;
       self.updateMap();
-      self.updateState();
+      self.updateState(true);
     });
 
 
@@ -188,13 +185,16 @@
     if (placeholder.indexOf('mre_rise') !== -1) {
       return this.getValue(elem, 'mre_rise') + '%';
     }
-    if (placeholder.indexOf('mre') !== -1) {
-      return Math.round(this.getValue(elem, placeholder, this.state.jahr));
+    if (placeholder.indexOf('rise') === -1) {
+      return this.getValue(elem, placeholder, this.state.jahr || '2013');
     }
-    return Math.round(this.getValue(elem, placeholder));
+    return this.getValue(elem, placeholder);
   };
 
   Kreiskarte.prototype.showPlaceholderLabel = function(placeholder, elem) {
+    if (this.options.dimensions[placeholder].getDetailLabel) {
+      return this.options.dimensions[placeholder].getDetailLabel(elem || this.activated);
+    }
     var s = this.showPlaceholder(this.options.dimensions[placeholder].key, elem);
     return s+ ' ' +this.options.dimensions[placeholder].label;
   };
@@ -204,6 +204,8 @@
     if (!(this.features && this.plz)) {
       return false;
     }
+
+    $('.loading').remove();
 
     var self = this;
 
@@ -280,8 +282,12 @@
     return "?" + queryString.join('&');
   };
 
-  Kreiskarte.prototype.updateState = function() {
-    history.pushState(this.state, "Keimkarte", this.getStateQueryString());
+  Kreiskarte.prototype.updateState = function(replace) {
+    if (replace) {
+      history.replaceState(this.state, "Keimkarte", this.getStateQueryString());
+    } else {
+      history.pushState(this.state, "Keimkarte", this.getStateQueryString());
+    }
     this.updateControls();
   };
 
@@ -295,7 +301,7 @@
     if (this.state.jahr) {
       $('.yearslider input').val(this.state.jahr);
     }
-    if (this.state.key === 'mre') {
+    if (this.state.key.indexOf('rise') === -1) {
       d3.selectAll('.yearslider').style('display', 'block');
     } else {
       d3.selectAll('.yearslider').style('display', 'none');
@@ -307,17 +313,18 @@
     if (this.activated) {
       shareText = window.encodeURIComponent(this.showPlaceholderLabel(this.state.key));
       imageUrl = ' https://apps.correctiv.org/media/keime/img/gifs/' + this.state.kreis + '/' + this.state.kreis + '_mre.gif';
-      d3.selectAll('.current').text(this.showPlaceholder(this.state.key));
+      d3.selectAll('.current').text(this.showPlaceholderLabel(this.state.key));
       if (this.state.key !== 'mre_rise') {
         d3.selectAll('.current_label').text(this.showPlaceholderLabel(this.state.key));
-        d3.selectAll('.current').text(this.showPlaceholder(this.state.key));
         d3.selectAll('.current_p').text(this.showPlaceholder(this.state.key + '_p'));
         d3.selectAll('.current_rank').text(this.showPlaceholder(this.state.key + '_rank'));
+        d3.selectAll('.current_full').text(this.showPlaceholder(this.state.key));
+        d3.selectAll('.current_full-label').style('display', 'inline');
       } else {
         d3.selectAll('.current_label').text(this.showPlaceholderLabel('mre_rise'));
-        d3.selectAll('.current').text(this.showPlaceholder('mre_2013'));
         d3.selectAll('.current_p').text(this.showPlaceholder('mre_p_2013'));
         d3.selectAll('.current_rank').text(this.showPlaceholder('mre_rank_2013'));
+        d3.selectAll('.current_full-label').style('display', 'none');
       }
     } else {
       d3.selectAll('.current_label').text(this.options.dimensions[this.state.key].label);
@@ -331,6 +338,33 @@
         'https://plus.google.com/share?url=' + shareUrl);
     d3.selectAll('.mail-share').attr('href',
         'mailto:?subject=' + shareText + '&body=' + shareUrl);
+
+    if (this.activated) {
+      var d = this.activated;
+      for (var i = 0; i < this.options.placeholders.length; i++) {
+        var placeholder = this.options.placeholders[i];
+        d3.selectAll('.' + placeholder).text(this.showPlaceholder(placeholder, d));
+      }
+      d3.select('.mre_rise-section').style('display', 'inline');
+      d3.selectAll('.mre_rise').text(Math.abs(d.properties.mre_rise));
+      if (d.properties.mre_rise < 0) {
+        d3.selectAll('.mre_rise-label').text('verringert');
+        d3.selectAll('.mre_rise-icon').classed('icon-up-circled', false);
+        d3.selectAll('.mre_rise-icon').classed('icon-down-circled', true);
+      } else if (d.properties.mre_rise > 0) {
+        d3.selectAll('.mre_rise-label').text('erhöht');
+        d3.selectAll('.mre_rise-icon').classed('icon-down-circled', false);
+        d3.selectAll('.mre_rise-icon').classed('icon-up-circled', true);
+      } else {
+        d3.selectAll('.mre_rise-icon').classed('icon-down-circled', false);
+        d3.selectAll('.mre_rise-icon').classed('icon-up-circled', false);
+        d3.selectAll('.mre_rise-label').text('verändert');
+      }
+      d3.selectAll('.mrsa-color').style('background-color', this.kreisColor.mrsa(this.getValue(d, 'mrsa_p', this.state.jahr)));
+      d3.selectAll('.esbl-color').style('background-color', this.kreisColor.esbl(this.getValue(d, 'esbl_p', this.state.jahr)));
+      d3.selectAll('.vre-color').style('background-color', this.kreisColor.vre(this.getValue(d, 'vre_p', this.state.jahr)));
+    }
+
   };
 
   Kreiskarte.prototype.drawMap = function(error, kreise) {
@@ -506,7 +540,7 @@
 
     this.kreise.selectAll('.kreis')
       .style('fill', function(d){
-        var val = self.getValue(d, dimension.key, self.state.jahr)
+        var val = self.getValue(d, dimension.key, self.state.jahr);
         if (val !== null) {
           return kreisColor(val);
         } else {
@@ -518,7 +552,7 @@
       .domain(kreisColor.domain())
       .range(kreisColor.range());
 
-    var legendWidth = 20;
+    var legendWidth = 15;
     this.legend.attr('width', legendWidth * kreisColor.range().length);
     this.legend.selectAll('rect').remove();
     this.legend.selectAll('text').remove();
@@ -615,35 +649,6 @@
       this.zoomToBounds(d);
       d3.selectAll('.kreis-info').style('display', 'block');
       d3.selectAll('.kreis-name').text(d.properties.name);
-      for (var i = 0; i < this.options.placeholders.length; i++) {
-        var placeholder = this.options.placeholders[i];
-        d3.selectAll('.' + placeholder).text(d.properties[placeholder]);
-      }
-      if (d.properties.mre_rise === null) {
-        d3.selectAll('.mre_rise-section').style('display', 'none');
-      } else {
-        d3.select('.mre_rise-section').style('display', 'inline');
-        d3.selectAll('.mre_rise').text(Math.abs(d.properties.mre_rise));
-        if (d.properties.mre_rise < 0) {
-          d3.selectAll('.mre_rise-label').text('verringert');
-          d3.selectAll('.mre_rise-icon').classed('icon-up-circled', false);
-          d3.selectAll('.mre_rise-icon').classed('icon-down-circled', true);
-        } else if (d.properties.mre_rise > 0) {
-          d3.selectAll('.mre_rise-label').text('erhöht');
-          d3.selectAll('.mre_rise-icon').classed('icon-down-circled', false);
-          d3.selectAll('.mre_rise-icon').classed('icon-up-circled', true);
-        } else {
-          d3.selectAll('.mre_rise-icon').classed('icon-down-circled', false);
-          d3.selectAll('.mre_rise-icon').classed('icon-up-circled', false);
-          d3.selectAll('.mre_rise-label').text('verändert');
-        }
-      }
-      d3.selectAll('.mrsa_p').attr('title', d.properties.mrsa + ' Fälle');
-      d3.selectAll('.vre_p').attr('title', d.properties.vre + ' Fälle');
-      d3.selectAll('.esbl_p').attr('title', d.properties.esbl + ' Fälle');
-      d3.selectAll('.mrsa-color').style('background-color', this.kreisColor.mrsa(d.properties.mrsa_p));
-      d3.selectAll('.esbl-color').style('background-color', this.kreisColor.esbl(d.properties.esbl_p));
-      d3.selectAll('.vre-color').style('background-color', this.kreisColor.vre(d.properties.vre_p));
     }
   };
 
