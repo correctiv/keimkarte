@@ -88,7 +88,7 @@
           years: [2010, 2011, 2012, 2013]
         }
       },
-      placeholders: ['mre', 'mre_p', 'mre_rank', 'mre_rise',
+      placeholders: ['mre_rank_2013', 'mre', 'mre_p', 'mre_rank', 'mre_rise',
                     'mrsa', 'mrsa_p', 'mrsa_rank', 'mrsa_rise',
                     'esbl', 'esbl_p', 'esbl_rank', 'esbl_rise',
                     'vre', 'vre_p', 'vre_rank', 'vre_rise']
